@@ -1,27 +1,51 @@
 
 import discord
+import os
+from dotenv import load_dotenv
+from BPCalc import placeOrder, lookupBP
 
-f = open("BotToken.txt")
-token = f.read()
+load_dotenv()
+
+TOKEN = os.getenv("TOKEN")
+# f = open("BotToken.txt")
+# token = f.read()
 
 
-intents = discord.Intents.default()
-intents.message_content = True
-
-client = discord.Client(intents=intents)
+bot = discord.Bot()
 
 
-@client.event
+@bot.event
 async def on_ready():
-    print(f'We have logged in as {client.user}')
+    print(f"{bot.user} is ready and online!")
 
 
-@client.event
-async def on_message(message):
-    if message.author == client.user:
-        return
+@bot.slash_command(name="blueprints", description="Say hello to the bot")
+async def lookupBp(ctx, blueprint):
+    bps = lookupBP(blueprint.lower())
+    response = ""
+    for bp in bps:
+        response = response + f'''
+        # {bp["Rarity"]} {bp["Name"]}\n
+'''
+        for k, v in bp.items():
+            if v != None and (k != "Rarity" and k != "Name"):
+                response = response + f'''
+                ## {k}: {v}\n
+'''
 
-    if message.content.startswith('$hello'):
-        await message.channel.send('Hello!')
+    await ctx.respond(response)
 
-client.run('your token here')
+
+@bot.slash_command(name="order", description="Place an order for bps")
+async def order(ctx, order):
+    cost, parsedOrder = placeOrder(order.lower())
+    breakdown = ""
+    for material, amount in cost.items():
+        if amount > 0:
+            breakdown = breakdown + f"## {material}: {amount}\n"
+    await ctx.respond(f'''
+    # Your Order (with tax): {parsedOrder}
+    {breakdown}
+''')
+
+bot.run(TOKEN)

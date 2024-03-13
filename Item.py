@@ -27,7 +27,7 @@ class Item(object):
         return self.tier
 
     def toString(self):
-        return self.amount + ", " + self.tier + ", " + self.name
+        return self.amount + " " + self.tier + " " + self.name
 
 
 def createItem(name, tier, amount):

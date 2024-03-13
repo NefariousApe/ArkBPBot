@@ -7,7 +7,7 @@ from BPCalc import placeOrder, lookupBP
 load_dotenv()
 
 #! SWITCH TO PUBLISHED_TOKEN FOR MAIN BRANCH
-TOKEN = os.getenv("PUBLISHED_TOKEN")
+TOKEN = os.getenv("DEVELOPMENT_TOKEN ")
 # f = open("BotToken.txt")
 # token = f.read()
 

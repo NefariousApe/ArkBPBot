@@ -1,3 +1,4 @@
+
 import discord
 
 f = open("BotToken.txt")

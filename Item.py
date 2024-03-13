@@ -31,5 +31,6 @@ class Item(object):
 
 
 def createItem(name, tier, amount):
+
     item = Item(name, tier, amount)
     return item

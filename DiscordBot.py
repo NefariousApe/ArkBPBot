@@ -6,7 +6,8 @@ from BPCalc import placeOrder, lookupBP
 
 load_dotenv()
 
-TOKEN = os.getenv("TOKEN")
+#! SWITCH TO PUBLISHED_TOKEN FOR MAIN BRANCH
+TOKEN = os.getenv("PUBLISHED_TOKEN")
 # f = open("BotToken.txt")
 # token = f.read()
 
@@ -21,6 +22,7 @@ async def on_ready():
 
 @bot.slash_command(name="blueprints", description="Say hello to the bot")
 async def lookupBp(ctx, blueprint):
+
     bps = lookupBP(blueprint.lower())
     response = ""
     for bp in bps:

@@ -24,30 +24,43 @@ async def on_ready():
 async def lookupBp(ctx, blueprint):
 
     bps = lookupBP(blueprint.lower())
-    response = ""
-    for bp in bps:
-        response = response + f'''
-        # {bp["Rarity"]} {bp["Name"]}\n
+    if bps == "Error":
+        response = f'''
+        There was an error processing your request.\nCheck that your input was matches a bp\nInput: {blueprint}
 '''
-        for k, v in bp.items():
-            if v != None and (k != "Rarity" and k != "Name"):
-                response = response + f'''
-                ## {k}: {v}\n
-'''
+        await ctx.respond(response)
+    else:
+        response = ""
+        for bp in bps:
+            response = response + f'''
+            # {bp["Rarity"]} {bp["Name"]}\n
+    '''
+            for k, v in bp.items():
+                if v != None and (k != "Rarity" and k != "Name"):
+                    response = response + f'''
+                    ## {k}: {v}\n
+    '''
 
-    await ctx.respond(response)
+        await ctx.respond(response)
 
 
 @bot.slash_command(name="order", description="Place an order for bps")
 async def order(ctx, order):
-    cost, parsedOrder = placeOrder(order.lower())
-    breakdown = ""
-    for material, amount in cost.items():
-        if amount > 0:
-            breakdown = breakdown + f"## {material}: {amount}\n"
-    await ctx.respond(f'''
-    # Your Order (with tax): {parsedOrder}
-    {breakdown}
-''')
+    cost, parsedOrder, error = placeOrder(order.lower())
+    if error == "Error":
+        response = f'''
+        There was an error processing your request.\nCheck that your input was matches a bp\nInput: {order}
+    '''
+        await ctx.respond(response)
+    else:
+        breakdown = ""
+        for material, amount in cost.items():
+            if amount > 0:
+                breakdown = breakdown + f"## {material}: {amount}\n"
+        await ctx.respond(f'''
+        # Your Order (with tax): {parsedOrder}
+        {breakdown}
+    '''
+        )
 
 bot.run(TOKEN)

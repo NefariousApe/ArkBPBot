@@ -5,7 +5,6 @@ import json
 
 exampleOrder = "3 mc anky, 4 asc bary"
 
-
 matTotals = {
     'Fiber': 0,
     'Hide': 0,
@@ -21,19 +20,24 @@ matTotals = {
     'Crystal': 0,
     'Polymer': 0
 }
+
 with open("AdatBp.json") as bpFile:
     data = json.load(bpFile)
 
 
 def placeOrder(order):
     parsedOrder = parseOrder(order)
+    if parsedOrder == "Error":
+        return matTotals, " ", "Error"
     getCosts(parsedOrder)
-    return matTotals, orderToString(parsedOrder)
+    return matTotals, orderToString(parsedOrder), ""
 
 
 def lookupBP(bp):
     name = lookupName(bp)
-    bps = getBps(name)
+    bps = "Error"
+    if name != "Error":
+        bps = getBps(name)
     return bps
 
 
@@ -77,13 +81,20 @@ def parseOrder(order):
     parsedOrder = []
     items = order.split(',')
 
-    for item in items:
-        item = item.strip()
-        singleItem = str.split(item, ' ')
-        amount = singleItem[0]
-        tier = lookupTier(singleItem[1])
-        name = lookupName(" ".join(singleItem[2:]))
-        parsedOrder.append(Item(name, tier, amount))
+    if len(items) > 0:
+        for item in items:
+            item = item.strip()
+            singleItem = str.split(item, ' ')
+            if len(singleItem) < 3:
+                return "Error"
+            amount = singleItem[0]
+            tier = lookupTier(singleItem[1])
+            name = lookupName(" ".join(singleItem[2:]))
+            if tier == "Error" or name == "Error":
+                return "Error"
+            parsedOrder.append(Item(name, tier, amount))
+    else:
+        return "Error"
     return parsedOrder
 
 

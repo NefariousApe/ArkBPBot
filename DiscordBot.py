@@ -20,7 +20,7 @@ async def on_ready():
     print(f"{bot.user} is ready and online!")
 
 
-@bot.slash_command(name="blueprints", description="Say hello to the bot")
+@bot.slash_command(name="blueprints", description="Returns the costs of a blueprint")
 async def lookupBp(ctx, blueprint):
 
     bps = lookupBP(blueprint.lower())

@@ -3,7 +3,8 @@ from NameToBpDict import bpDict, tierDict
 from Item import Item
 import json
 
-exampleOrder = "3 mc anky, 4 asc bary"
+exampleOrder = "15 asc theri"
+exampleHappy = "15 jr theri"
 
 matTotals = {
     'Fiber': 0,
@@ -26,11 +27,18 @@ with open("AdatBp.json") as bpFile:
 
 
 def placeOrder(order):
+    resetTotals()
     parsedOrder = parseOrder(order)
-    if parsedOrder == "Error":
+    status = getCosts(parsedOrder)
+    if parsedOrder == "Error" or status == "Error":
         return matTotals, " ", "Error"
-    getCosts(parsedOrder)
+
     return matTotals, orderToString(parsedOrder), ""
+
+
+def resetTotals():
+    for k in matTotals:
+        matTotals[k] = 0
 
 
 def lookupBP(bp):
@@ -100,15 +108,21 @@ def parseOrder(order):
 
 def getCosts(order):
     for item in order:
+        itemFound = False
         for bp in data:
+
             if bp["Name"] == item.getName() and bp["Rarity"] == item.getTier():
+                itemFound = True
                 start = False
                 for key in bp.keys():
                     if key == "Fiber":
                         start = True
                     if start and bp[key] != None:
-                        matTotals[key] = matTotals[key] + \
-                            bp[key] * int(item.getAmount()) * 2
+                        matTotals[key] = round(matTotals[key] +
+                                               bp[key] * int(item.getAmount()) * 1.5)
+        if not itemFound:
+            return "Error"
+    return "Success"
 
 
 # bps = lookupBP("stego")
@@ -124,7 +138,7 @@ def getCosts(order):
 # '''
 # print(response)
 
-# test = lookupBP("stego")
-# print(test)s
-# order, orderString = placeOrder(exampleOrder)
-# print(orderString)
+# test = lookupBP("rex")
+# print(test)
+# order, orderString, errMsg = placeOrder(exampleHappy)
+# print(errMsg)
